@@ -1,0 +1,54 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Environment variables
+.env
+.env.*        # .env.development, .env.local, etc
+
+# Build output
+dist/
+build/
+out/
+coverage/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Dependency directories
+bower_components/
+jspm_packages/
+
+# System files
+*.swp
+*.bak
+*.tmp
+
+# Testing
+coverage/
+*.lcov
+
+# TypeScript
+*.tsbuildinfo
+
+# Others
+*.local
+*.cache
+*.lock
+
+requirements/~$ApplicationFeaturesTest.xlsx
+requirements/ApplicationFeaturesTest.xlsx
