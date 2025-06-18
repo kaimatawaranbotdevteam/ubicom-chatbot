@@ -49,5 +49,7 @@ coverage/
 *.cache
 *.lock
 
-requirements/~$ApplicationFeaturesTest.xlsx
-requirements/ApplicationFeaturesTest.xlsx
+node_modules/
+client/node_modules/
+client/build/
+.env
