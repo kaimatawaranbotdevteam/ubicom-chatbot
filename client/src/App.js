@@ -13,11 +13,6 @@ export default function App() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]); // scrolls on message update
 
-  const resetConversation = () => {
-    setMessages([]); // Clear history
-    setQuery("");    // Clear input field
-  };
-
   const handleSearch = async () => {
     if (!query.trim()) return;
 
@@ -38,26 +33,24 @@ export default function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: updatedMessages}),
       });
-  
+
       const data = await res.json();
 
       const responseMessages = {
         role: "system",
         content: data.reply
       };
-      
+
       setMessages((prev) => [
         ...prev, responseMessages]);
-      
-      
 
       console.log('Azure Completion Response:', data.reply);
-  
+
       if (!res.ok) {
         alert(data.error || "Something went wrong. Please try again.");
         return;
       }
-  
+
       if (!data.reply) {
         alert("No answer received from the AI service.");
         return;
@@ -72,10 +65,10 @@ export default function App() {
   return (
   <div className="flex items-center justify-center min-h-screen bg-gray-100">
   {/* Top-right icon */}
-  <div className="flex justify-between items-start w-full px-12 py-6 absolute top-8 left-0">
+  <div className="absolute left-0 flex items-start justify-between w-full px-12 py-6 top-8">
     <div><span className="text-4xl text-gray-400">Smart Assistant</span>
     </div>
-    <div><img src="assets/Bulb.png" alt="Logo" className="w-60 h-12" />
+    <div><img src="assets/Bulb.png" alt="Logo" className="h-12 w-60" />
     </div>
   </div>
 
@@ -92,7 +85,7 @@ export default function App() {
       // <div key={index} className="flex flex-col mb-2"className="flex flex-col mb-2">
       return (
         <div key={index} className={`${bubble}`} >
-             {msg.content}
+              {msg.content}
         </div>
       )
     })}
@@ -113,7 +106,7 @@ export default function App() {
         }}
         placeholder="Type your question and press Enter or hit Send button..."
       />
-      <LuSend className="ml-2 h-10 w-10" onClick={handleSearch}/>
+      <LuSend className="w-10 h-10 ml-2" onClick={handleSearch}/>
     </div>
 
     </div>
