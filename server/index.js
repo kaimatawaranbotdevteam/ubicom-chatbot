@@ -12,7 +12,23 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+app.get('/api/hello', (req, res) => {
+    res.json({ message: 'Hello from backend!' });
+});
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/build/index.html'));
+});
+
+// ---------------
+// Start server
+// ---------------
 const port = 3001;
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
 
 // Azure Blob Storage Setup
 const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);
@@ -470,10 +486,3 @@ async function main() {
 // ---------------
 // to index csv and xls
 //main().catch(console.error);
-
-// ---------------
-// Start server
-// ---------------
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-});
