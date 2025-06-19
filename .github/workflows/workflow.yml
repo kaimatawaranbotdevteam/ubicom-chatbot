@@ -5,7 +5,7 @@ on: [push]
 
 env:
   AZURE_WEBAPP_NAME: ubicom-chatbot-web-app
-  AZURE_WEBAPP_PACKAGE_PATH: 'C:/Users/francesca.matawaran/Desktop/ubicom-chatbot'
+  AZURE_WEBAPP_PACKAGE_PATH: 'client/build'
   NODE_VERSION: '22.11.0'
 
 jobs:
