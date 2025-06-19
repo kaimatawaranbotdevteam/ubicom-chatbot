@@ -1,34 +1,43 @@
-# File: .github/workflows/workflow.yml
-name: JavaScript CI
+name: Fullstack Deploy to Azure
 
 on: [push]
 
 env:
   AZURE_WEBAPP_NAME: ubicom-chatbot-web-app
-  AZURE_WEBAPP_PACKAGE_PATH: 'client/build'
   NODE_VERSION: '20.x'
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: npm install and build
+      - name: Install and build React app
+        working-directory: ./client
         run: |
           npm install
-          npm run build --if-present
-        working-directory: ./client
+          npm run build
 
-      - name: Deploy to Azure Web App
+      - name: Copy React build to backend
+        run: |
+          rm -rf server/public
+          mkdir -p server/public
+          cp -r client/build/* server/public/
+
+      - name: Install server dependencies
+        working-directory: ./server
+        run: npm install
+
+      - name: Deploy fullstack app to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ./server
