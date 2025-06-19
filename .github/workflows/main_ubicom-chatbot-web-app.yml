@@ -59,4 +59,4 @@ jobs:
           app-name: 'ubicom-chatbot-web-app'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_830F0F3345B64B8097708F7B31D1F823 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_96C1C877017D44EDB40D9DE6246C5C91 }}
