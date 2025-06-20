@@ -41,13 +41,18 @@ jobs:
       - name: Debug contents before deployment
         run: ls -alR ./server
 
+      - name: Zip server contents (excluding top-level folder)
+        run: |
+          cd server
+          zip -r ../deploy.zip ./*
+
       - name: Deploy to Azure - Attempt 1
         uses: azure/webapps-deploy@v2
         continue-on-error: true
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server/
+          package: deploy.zip
 
       - name: Deploy to Azure - Attempt 2
         if: failure()
@@ -56,7 +61,7 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server/
+          package: deploy.zip
 
       - name: Deploy to Azure - Attempt 3
         if: failure()
@@ -64,4 +69,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server/
+          package: deploy.zip
