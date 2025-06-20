@@ -44,7 +44,7 @@ jobs:
       - name: Zip server contents (excluding top-level folder)
         run: |
           cd server
-          zip -r ../deploy.zip ./*
+          zip -r ../deploy.zip .
 
       - name: Deploy to Azure - Attempt 1
         uses: azure/webapps-deploy@v2
