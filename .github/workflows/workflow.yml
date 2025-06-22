@@ -8,44 +8,57 @@ env:
 
 jobs:
   build-and-deploy:
-
     name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
 
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      # Step 3: Install and build React app
       - name: Install and build React app
         run: |
           npm install
           npm run build
         working-directory: ./client
 
+      # Step 4: Copy React build to backend (public)
       - name: Copy React build to backend
         run: |
           rm -rf server/public
           mkdir -p server/public
           cp -r client/build/* server/public/
 
+      # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
         run: |
           npm install
 
-      - name: Debug contents before deployment
+      # Step 6: Debug and check server contents
+      - name: Debug server folder before deployment
         run: ls -alR ./server
 
-      - name: Zip server contents (excluding top-level folder)
+      # Step 7: Create a deployment package that includes the full `server/` directory structure
+      - name: Create deploy package for Azure
         run: |
-          cd server
-          zip -r ../deploy.zip .  # Ensure server/ folder is being zipped properly
+          # Create a new deploy directory to structure the app
+          mkdir -p deploy/server
+          cp -r server/* deploy/server/  # Copy everything from server/ to deploy/server/
+          cp -r client/build deploy/      # Copy React build output to deploy/
+          
+          # Now create a zip with the correct structure
+          cd deploy
+          zip -r ../deploy.zip .
 
+      # Step 8: Deploy to Azure (attempt 1)
       - name: Deploy to Azure - Attempt 1
         uses: azure/webapps-deploy@v2
         continue-on-error: true
@@ -54,10 +67,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: deploy.zip
 
-      - name: Debug contents after deployment
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ${{ secrets.AZURE_SSH_PRIVATE_KEY }} ${{ secrets.AZURE_SSH_USER }}@${{ secrets.AZURE_WEBAPP_NAME }} "ls -alR /home/site/wwwroot/"
-
+      # Step 9: Retry deployment if the first attempt fails (attempt 2)
       - name: Deploy to Azure - Attempt 2
         if: failure()
         uses: azure/webapps-deploy@v2
@@ -67,6 +77,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: deploy.zip
 
+      # Step 10: Retry deployment if the second attempt fails (attempt 3)
       - name: Deploy to Azure - Attempt 3
         if: failure()
         uses: azure/webapps-deploy@v2
