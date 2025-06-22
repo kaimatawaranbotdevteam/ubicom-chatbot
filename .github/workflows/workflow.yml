@@ -29,7 +29,7 @@ jobs:
           npm run build
         working-directory: ./client
 
-      # Step 4: Copy React build to backend (public)
+      # Step 4: Copy React build to backend (public folder)
       - name: Copy React build to backend
         run: |
           rm -rf server/public
@@ -42,23 +42,25 @@ jobs:
         run: |
           npm install
 
-      # Step 6: Debug and check server contents
+      # Step 6: Debug server folder before deployment
       - name: Debug server folder before deployment
         run: ls -alR ./server
 
-      # Step 7: Create a deployment package that includes the full `server/` directory structure
+      # Step 7: Create deploy package, ensuring server folder structure is intact
       - name: Create deploy package for Azure
         run: |
-          # Create a new deploy directory to structure the app
-          mkdir -p deploy/server
-          cp -r server/* deploy/server/  # Copy everything from server/ to deploy/server/
-          cp -r client/build deploy/      # Copy React build output to deploy/
-          
-          # Now create a zip with the correct structure
-          cd deploy
-          zip -r ../deploy.zip .
+          mkdir -p deploy/wwwroot   # Create a wwwroot directory for Azure
+          cp -r server/* deploy/wwwroot/  # Copy the server content into wwwroot
+          cp -r client/build/* deploy/wwwroot/  # Copy the React build output to wwwroot
 
-      # Step 8: Deploy to Azure (attempt 1)
+          # Check contents of deploy folder before zipping
+          ls -alR deploy/wwwroot  # Debug the contents
+
+          # Zip the deploy directory
+          cd deploy
+          zip -r ../deploy.zip .  # Create the zip package for Azure
+
+      # Step 8: Deploy to Azure - Attempt 1
       - name: Deploy to Azure - Attempt 1
         uses: azure/webapps-deploy@v2
         continue-on-error: true
