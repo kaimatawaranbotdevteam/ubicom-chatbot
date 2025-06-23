@@ -51,13 +51,13 @@ jobs:
         run: |
           mkdir -p deploy/wwwroot   # Create the wwwroot directory for Azure
           
-          # Copy server folder (including index.js) to wwwroot
+          # Copy server folder (including server.js) to wwwroot
           cp -r server/* deploy/wwwroot/
 
           # Copy client build folder (React static files) to wwwroot
           cp -r client/build/* deploy/wwwroot/
 
-          # Ensure index.js is in the correct location
+          # Ensure server.js is in the correct location
           ls -alR deploy/wwwroot/  # Debug the contents of wwwroot
 
       # Step 8: Zip the deploy folder, ensuring correct structure
