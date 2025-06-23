@@ -46,21 +46,27 @@ jobs:
       - name: Debug server folder before deployment
         run: ls -alR ./server
 
-      # Step 7: Create deploy package, ensuring server folder structure is intact
-      - name: Create deploy package for Azure
+      # Step 7: Create a deployment folder structure for Azure
+      - name: Prepare deployment package
         run: |
-          mkdir -p deploy/wwwroot   # Create a wwwroot directory for Azure
-          cp -r server/* deploy/wwwroot/  # Copy the server content into wwwroot
-          cp -r client/build/* deploy/wwwroot/  # Copy the React build output to wwwroot
+          mkdir -p deploy/wwwroot   # Create the wwwroot directory for Azure
+          
+          # Copy server folder (including index.js) to wwwroot
+          cp -r server/* deploy/wwwroot/
 
-          # Check contents of deploy folder before zipping
-          ls -alR deploy/wwwroot  # Debug the contents
+          # Copy client build folder (React static files) to wwwroot
+          cp -r client/build/* deploy/wwwroot/
 
-          # Zip the deploy directory
+          # Ensure index.js is in the correct location
+          ls -alR deploy/wwwroot/  # Debug the contents of wwwroot
+
+      # Step 8: Zip the deploy folder, ensuring correct structure
+      - name: Zip deploy package for Azure
+        run: |
           cd deploy
-          zip -r ../deploy.zip .  # Create the zip package for Azure
+          zip -r ../deploy.zip ./wwwroot  # Zip only the contents of wwwroot
 
-      # Step 8: Deploy to Azure - Attempt 1
+      # Step 9: Deploy to Azure - Attempt 1
       - name: Deploy to Azure - Attempt 1
         uses: azure/webapps-deploy@v2
         continue-on-error: true
@@ -69,7 +75,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: deploy.zip
 
-      # Step 9: Retry deployment if the first attempt fails (attempt 2)
+      # Step 10: Retry deployment if the first attempt fails (Attempt 2)
       - name: Deploy to Azure - Attempt 2
         if: failure()
         uses: azure/webapps-deploy@v2
@@ -79,7 +85,7 @@ jobs:
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: deploy.zip
 
-      # Step 10: Retry deployment if the second attempt fails (attempt 3)
+      # Step 11: Retry deployment if the second attempt fails (Attempt 3)
       - name: Deploy to Azure - Attempt 3
         if: failure()
         uses: azure/webapps-deploy@v2
