@@ -29,40 +29,53 @@ jobs:
           npm run build
         working-directory: ./client
 
-      # Step 4: Install server dependencies
+      # Step 4: Copy React build to backend (public folder)
+      - name: Copy React build to backend
+        run: |
+          rm -rf server/public
+          mkdir -p server/public
+          cp -r client/build/* server/public/
+
+      # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
         run: |
           npm install
 
-      # Step 5: Debug server folder before deployment
+      # Step 6: Debug server folder before deployment
       - name: Debug server folder before deployment
         run: ls -alR ./server
 
-      # Step 6: Prepare the deployment folder structure for Azure
+      # Step 7: Create a deployment folder structure for Azure
       - name: Prepare deployment package
         run: |
-          mkdir -p deploy/wwwroot  # Create wwwroot directory for Azure
+          mkdir -p deploy/wwwroot/client  # Create directory for React app
+          mkdir -p deploy/wwwroot/server  # Create directory for server app
 
-          # Copy client build (React static files) directly to wwwroot
-          cp -r client/build/* deploy/wwwroot/
+          # Copy client build to wwwroot/client
+          cp -r client/build/* deploy/wwwroot/client/
 
-          # Copy server files (including server.js, package.json, etc.) to the root of wwwroot
-          cp -r server/* deploy/wwwroot/
+          # Copy server files (including server.js) to wwwroot/server
+          cp -r server/* deploy/wwwroot/server/
 
-          # Debug contents of wwwroot folder
+          # Debug contents
           ls -alR deploy/wwwroot/
 
-      # Step 7: Zip the deploy folder for Azure
+      # Step 8: Zip the deploy folder, ensuring correct structure
       - name: Zip deploy package for Azure
         run: |
           cd deploy
           zip -r ../deploy.zip ./wwwroot  # Ensure wwwroot is zipped correctly
 
-      # Step 8: Deploy to Azure
+      # Step 9: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: deploy.zip
+
+      # Step 10: Restart Azure App Service (optional, after deployment)
+      - name: Restart Azure App Service
+        run: |
+          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group <your-resource-group>
