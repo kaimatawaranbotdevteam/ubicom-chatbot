@@ -2,7 +2,7 @@ name: Fullstack Deploy to Azure
 
 on: [push]
 env:
-  AZURE_WEBAPP_NAME: ubicom-chatbot-web-app-fmcsgnfyg3cbejag.japaneast-01.azurewebsites.net
+  AZURE_WEBAPP_NAME: ubicom-chatbot-web-app
   AZURE_WEBAPP_PACKAGE_PATH: 'client/build'
   NODE_VERSION: '18.x'  # Use a more stable version of Node.js
 
