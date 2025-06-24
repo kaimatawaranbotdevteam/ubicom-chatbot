@@ -71,7 +71,11 @@ jobs:
           cd deploy
           zip -r deploy.zip ./wwwroot  # Zip only the contents of wwwroot
 
-      # Step 8: Deploy to Azure
+      - name: Check deploy package contents
+        run: |
+          unzip -l deploy.zip  # List contents of deploy.zip
+
+          # Step 8: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
