@@ -71,23 +71,13 @@ jobs:
       # Step 7: Zip the deploy folder to create deploy.zip
       - name: Zip the deploy folder
         run: |
-          cd deploy
-          zip -r deploy.zip ./wwwroot  # Zip only the contents of wwwroot
-
-          # Check if the zip command was successful
-          if [ $? -eq 0 ]; then
-            echo "Zip operation was successful."
-          else
-            echo "Zip operation failed."
-            exit 1  # Exit with an error code if zip failed
-          fi
-          # Show the full path of the zip file
-          echo "The zip file is located at: $(pwd)/deploy.zip"
+          zip -r deploy.zip ./wwwroot
+          echo "Created zip at: $(pwd)/deploy.zip"
+          ls -l deploy.zip  # Confirm it's there
 
       - name: Check deploy package contents
         run: |
           unzip -l deploy.zip  # List contents of deploy.zip
-
 
       # Step 8: Deploy to Azure
       - name: Deploy to Azure
