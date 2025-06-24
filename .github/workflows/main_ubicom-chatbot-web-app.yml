@@ -51,6 +51,7 @@ jobs:
         run: |
           mkdir -p deploy/wwwroot  # Create directory for deployment package
           mkdir -p deploy/wwwroot/server  # Create directory for deployment package
+          mkdir -p deploy/wwwroot/client  # Create directory for deployment package
 
           # Copy server files to the wwwroot directory
           cp -r server/* deploy/wwwroot/server
