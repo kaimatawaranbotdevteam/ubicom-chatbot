@@ -16,52 +16,61 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # Checkout code
+      # Step 1: Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Setup Node.js
+      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      # Install and build React app
+      # Step 3: Install and build React app
       - name: Install and build React app
         run: |
           npm install
           npm run build
         working-directory: ./client
 
-      # Copy React build to backend (public folder)
+      # Step 4: Copy React build to backend (public folder)
       - name: Copy React build to backend
         run: |
           rm -rf server/public
           mkdir -p server/public
           cp -r client/build/* server/public/
 
-      # Install server dependencies
+      # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
         run: |
           npm install
-     
-      # Prepare deployment package
+
+      # Step 6: Prepare deployment package
       - name: Prepare deployment package
         run: |
-          mkdir -p deploy/wwwroot
+          mkdir -p deploy/wwwroot  # Create directory for deployment package
+
+          # Copy server files to the wwwroot directory
           cp -r server/* deploy/wwwroot/
+
+          # Copy client build files to wwwroot/client
           cp -r client/build/* deploy/wwwroot/
 
-      # Deploy to Azure
+          # Debug to verify the contents of deploy folder
+          ls -alR deploy/wwwroot/
+
+      # Step 7: Zip the deploy folder to create deploy.zip
+      - name: Zip the deploy folder
+        run: |
+          cd deploy
+          zip -r deploy.zip ./wwwroot  # Zip only the contents of wwwroot
+
+      # Step 8: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: deploy.zip
+          package: deploy/deploy.zip  # Ensure the path is correct
 
-      # Step 10: Restart Azure App Service (optional, after deployment)
-      - name: Restart Azure App Service
-        run: |
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group genai-resource
