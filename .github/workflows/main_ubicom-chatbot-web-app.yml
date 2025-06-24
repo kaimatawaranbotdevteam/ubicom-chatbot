@@ -60,6 +60,11 @@ jobs:
           # Debug to verify the contents of deploy folder
           ls -alR deploy/wwwroot/
 
+      - name: Debug deploy folder
+        run: |
+          echo "Checking deploy folder..."
+          ls -al deploy/
+
       # Step 7: Zip the deploy folder to create deploy.zip
       - name: Zip the deploy folder
         run: |
