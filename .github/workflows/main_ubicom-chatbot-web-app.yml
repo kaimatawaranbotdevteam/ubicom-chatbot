@@ -75,15 +75,11 @@ jobs:
           echo "Created zip at: $(pwd)/deploy.zip"
           ls -l deploy.zip  # Confirm it's there
 
-      - name: Check deploy package contents
-        run: |
-          unzip -l deploy.zip  # List contents of deploy.zip
-
       # Step 8: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: deploy/deploy.zip  # Ensure the path is correct
+          package: deploy.zip  # Ensure the path is correct
 
