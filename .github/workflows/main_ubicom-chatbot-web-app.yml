@@ -75,6 +75,19 @@ jobs:
           echo "Created zip at: $(pwd)/deploy.zip"
           ls -l deploy.zip  # Confirm it's there
 
+      - name: Extract Kudu credentials
+        id: extract-creds
+        run: |
+          echo "::add-mask::${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}"
+          echo "BASIC_AUTH=$(echo '${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}' | base64 -d | grep -oP '(?<=userName>).*?(?=</userName)' | head -1):$(echo '${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}' | base64 -d | grep -oP '(?<=userPWD>).*?(?=</userPWD)' | head -1)" >> $GITHUB_ENV
+
+      - name: Clean wwwroot using Kudu API
+        run: |
+          curl -X DELETE \
+            -u "$BASIC_AUTH" \
+            "https://${{ env.AZURE_WEBAPP_NAME }}-fmcsgnfyg3cbejag.scm.japaneast-01.azurewebsites.net/wwwroot/" \
+            -H "Content-Type: application/json"
+
       # Step 8: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
