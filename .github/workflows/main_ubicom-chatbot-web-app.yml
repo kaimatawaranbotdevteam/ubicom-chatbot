@@ -45,13 +45,7 @@ jobs:
         working-directory: ./server
         run: |
           npm install
-
-      # Clear existing files from wwwroot using Azure CLI
-      - name: Clear existing files from wwwroot
-        run: |
-          az webapp ssh --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "id" > appId.txt
-          ssh -o StrictHostKeyChecking=no ${{ env.AZURE_WEBAPP_NAME }}@${appId.txt} 'rm -rf /home/site/wwwroot/*'
-
+     
       # Prepare deployment package
       - name: Prepare deployment package
         run: |
