@@ -74,11 +74,20 @@ jobs:
           cd deploy
           zip -r deploy.zip ./wwwroot  # Zip only the contents of wwwroot
 
+          # Check if the zip command was successful
+          if [ $? -eq 0 ]; then
+            echo "Zip operation was successful."
+          else
+            echo "Zip operation failed."
+            exit 1  # Exit with an error code if zip failed
+          fi
+
       - name: Check deploy package contents
         run: |
           unzip -l deploy.zip  # List contents of deploy.zip
 
-          # Step 8: Deploy to Azure
+
+      # Step 8: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
