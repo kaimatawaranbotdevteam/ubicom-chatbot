@@ -50,6 +50,7 @@ jobs:
       - name: Prepare deployment package
         run: |
           mkdir -p deploy/wwwroot  # Create directory for deployment package
+          mkdir -p deploy/wwwroot/server  # Create directory for deployment package
 
           # Copy server files to the wwwroot directory
           cp -r server/* deploy/wwwroot/server
@@ -60,6 +61,7 @@ jobs:
           # Debug to verify the contents of deploy folder
           ls -alR deploy/wwwroot/
 
+      #Step: Debug deploy folder
       - name: Debug deploy folder
         run: |
           echo "Checking deploy folder..."
