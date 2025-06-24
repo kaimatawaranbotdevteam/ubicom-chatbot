@@ -52,10 +52,10 @@ jobs:
           mkdir -p deploy/wwwroot  # Create directory for deployment package
 
           # Copy server files to the wwwroot directory
-          cp -r server/* deploy/wwwroot/
+          cp -r server/* deploy/wwwroot/server
 
           # Copy client build files to wwwroot/client
-          cp -r client/build/* deploy/wwwroot/
+          cp -r client/build/* deploy/wwwroot/client
 
           # Debug to verify the contents of deploy folder
           ls -alR deploy/wwwroot/
