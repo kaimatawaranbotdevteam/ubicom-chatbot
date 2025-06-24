@@ -81,6 +81,8 @@ jobs:
             echo "Zip operation failed."
             exit 1  # Exit with an error code if zip failed
           fi
+          # Show the full path of the zip file
+          echo "The zip file is located at: $(pwd)/deploy.zip"
 
       - name: Check deploy package contents
         run: |
