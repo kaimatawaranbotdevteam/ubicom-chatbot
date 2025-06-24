@@ -1,10 +1,14 @@
 name: Fullstack Deploy to Azure
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+
 env:
   AZURE_WEBAPP_NAME: ubicom-chatbot-web-app
-  AZURE_WEBAPP_PACKAGE_PATH: 'client/build'
-  NODE_VERSION: '18.x'  # Use a more stable version of Node.js
+  AZURE_RESOURCE_GROUP: your-resource-group
+  NODE_VERSION: '18.x'
 
 jobs:
   build-and-deploy:
@@ -12,82 +16,53 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # Step 1: Checkout code
+      # Checkout code
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Setup Node.js
+      # Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      # Step 3: Install and build React app
+      # Install and build React app
       - name: Install and build React app
         run: |
           npm install
           npm run build
         working-directory: ./client
 
-      # Step 4: Copy React build to backend (public folder)
+      # Copy React build to backend (public folder)
       - name: Copy React build to backend
         run: |
           rm -rf server/public
           mkdir -p server/public
           cp -r client/build/* server/public/
 
-      # Step 5: Install server dependencies
+      # Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
         run: |
           npm install
 
-      # Step 6: Debug server folder before deployment
-      - name: Debug server folder before deployment
-        run: ls -alR ./server
-
-      # Step 7: Create a deployment folder structure for Azure
-      - name: Prepare deployment package
-        run: |
-          mkdir -p deploy/wwwroot/client  # Create directory for React app
-          mkdir -p deploy/wwwroot/server  # Create directory for server app
-
-          # Copy client build to wwwroot/client
-          cp -r client/build/* deploy/wwwroot/client/
-
-          # Copy server files (including server.js) to wwwroot/server
-          cp -r server/* deploy/wwwroot/server/
-
-          # Debug contents
-          ls -alR deploy/wwwroot/
-
-      # Step 8: Zip the deploy folder, ensuring correct structure
-      - name: Zip deploy package for Azure
-        run: |
-          cd deploy
-          zip -r ../deploy.zip ./wwwroot  # Ensure wwwroot is zipped correctly
-
-      # Debugging Step: Check contents of deploy directory before deployment
-      - name: List contents of deploy directory
-        run: ls -al deploy
-
-      #Clear existing files from wwwroot using Azure CLI
+      # Clear existing files from wwwroot using Azure CLI
       - name: Clear existing files from wwwroot
         run: |
-          az webapp ssh --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group genai-research --query "id" > appId.txt
-          az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group genai-research --settings WEBSITES_ENABLE_APP_SERVICE_STORAGE=true
-          az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group genai-research --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true
-          ssh -o StrictHostKeyChecking=no ${{ env.AZURE_WEBAPP_NAME }}@$(${appId.txt}) 'rm -rf /home/site/wwwroot/*'
+          az webapp ssh --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query "id" > appId.txt
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AZURE_WEBAPP_NAME }}@${appId.txt} 'rm -rf /home/site/wwwroot/*'
 
-      # Step 9: Deploy to Azure
+      # Prepare deployment package
+      - name: Prepare deployment package
+        run: |
+          mkdir -p deploy/wwwroot
+          cp -r server/* deploy/wwwroot/
+          cp -r client/build/* deploy/wwwroot/
+
+      # Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: deploy.zip
- 
-      # Step 10: Restart Azure App Service (optional, after deployment)
-      - name: Restart Azure App Service
-        run: |
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group <your-resource-group>
