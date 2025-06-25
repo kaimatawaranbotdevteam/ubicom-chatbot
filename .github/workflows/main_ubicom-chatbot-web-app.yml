@@ -29,6 +29,7 @@ jobs:
       # Step 3: Install and build React app
       - name: Install and build React app
         run: |
+          npm install
           npm run build
         working-directory: ./client
 
