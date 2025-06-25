@@ -71,7 +71,7 @@ jobs:
       # Step 7: Zip the deploy folder to create deploy.zip
       - name: Zip the deploy folder
         run: |
-          zip -r deploy.zip deploy/wwwroot
+          zip -r deploy.zip ./*
           echo "Created zip at: $(pwd)/deploy.zip"
           ls -l deploy.zip  # Confirm it's there
 
