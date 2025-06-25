@@ -29,16 +29,14 @@ jobs:
       # Step 3: Install and build React app
       - name: Install and build React app
         run: |
-          npm install
           npm run build
         working-directory: ./client
 
       # Step 4: Copy React build to backend (public folder)
       - name: Copy React build to backend
         run: |
-          rm -rf server/public
-          mkdir -p server/public
-          cp -r client/build/* server/public/
+          mkdir -p ./server/public
+          cp -r ./client/build/* ./server/public/
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
@@ -46,34 +44,11 @@ jobs:
         run: |
           npm install
 
-      # Step 6: Prepare deployment package
-      - name: Prepare deployment package
-        run: |
-          mkdir -p deploy/wwwroot  # Create directory for deployment package
-          mkdir -p deploy/wwwroot/server  # Create directory for deployment package
-          mkdir -p deploy/wwwroot/client  # Create directory for deployment package
-
-          # Copy server files to the wwwroot directory
-          cp -r server/* deploy/wwwroot/server
-
-          # Copy client build files to wwwroot/client
-          cp -r client/build/* deploy/wwwroot/client
-
-          # Debug to verify the contents of deploy folder
-          ls -alR deploy/wwwroot/
-
-      #Step: Debug deploy folder
-      - name: Debug deploy folder
-        run: |
-          echo "Checking deploy folder..."
-          ls -al deploy/
-
       # Step 7: Zip the deploy folder to create deploy.zip
       - name: Zip the deploy folder
         run: |
-          zip -r deploy.zip ./*
-          echo "Created zip at: $(pwd)/deploy.zip"
-          ls -l deploy.zip  # Confirm it's there
+          cd ./server
+          zip -r ../deploy.zip .
 
       # Step 8: Deploy to Azure
       - name: Deploy to Azure
@@ -81,4 +56,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: '${{ github.workspace }}/deploy.zip'
+          package: ./deploy.zip'

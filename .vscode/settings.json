@@ -1,0 +1,9 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/d8d407d1-6db3-483d-8db5-7656df9f36bb/resourceGroups/genai-research/providers/Microsoft.Web/sites/genai-research-web-app",
+    "appService.deploySubpath": ".",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "liveServer.settings.port": 5501
+}
