@@ -28,14 +28,15 @@ jobs:
 
       # Step 3: Install and build React app
       - name: Install and build React app
+        working-directory: ./client
         run: |
           npm install
           npm run build
-        working-directory: ./client
 
-      - name: Install dependencies for server  
-        working-directory: ./server  
-        run: npm install  
+      # Step 4: Copy React build to server folder
+      - name: Copy React build to server
+        run: |
+          cp -r ./client/build ./server/
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
@@ -49,4 +50,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./client/build
+          package: server
