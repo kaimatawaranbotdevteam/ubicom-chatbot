@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from React build (already copied to server/public)
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'build')));
 
 // // Sample API route
 // app.get('/api/hello', (req, res) => {
@@ -487,7 +487,7 @@ async function main() {
 // ---------------
 // Start server
 // ---------------
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
