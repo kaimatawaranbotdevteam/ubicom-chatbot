@@ -30,19 +30,25 @@ jobs:
       - name: Install and build React app
         working-directory: ./client
         run: |
-          npm install
+          npm ci
           npm run build
 
       # Step 4: Copy React build to server folder
       - name: Copy React build to server
         run: |
-          cp -r ./client/build ./server/
+          cp -r ./client/build/* ./server/
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
         run: |
-          npm install
+          npm ci --omit=dev
+
+      - name: Clean up build artifacts
+        run: |
+          rm -rf server/node_modules
+          rm -rf client/node_modules
+          rm -f node_modules.tar.gz
 
       # Step 8: Deploy to Azure
       - name: Deploy to Azure
