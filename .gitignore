@@ -7,4 +7,4 @@ node_modules/
 server/node_modules/
 client/node_modules/
 
-node_modules.tar.gz
+node_modules.tar.gzssh-keygen -t rsa -b 2048

@@ -36,7 +36,7 @@ jobs:
       # Step 4: Copy React build to server folder
       - name: Copy React build to server
         run: |
-          cp -r ./client/build/* ./server/
+          cp -r ./client/build/* ./server/wwwroot/
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
