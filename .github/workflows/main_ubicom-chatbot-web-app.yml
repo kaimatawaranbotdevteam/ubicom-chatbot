@@ -33,9 +33,10 @@ jobs:
           npm ci
           npm run build
 
-      # Step 4: Copy React build to server folder
-      - name: Copy React build to server
+      # Step 4: Create wwwroot directory and copy React build to server
+      - name: Create wwwroot and copy React build to server
         run: |
+          mkdir -p ./server/wwwroot    # Create the wwwroot directory if it doesn't exist
           cp -r ./client/build/* ./server/wwwroot/
 
       # Step 5: Install server dependencies
@@ -44,13 +45,14 @@ jobs:
         run: |
           npm ci --omit=dev
 
+      # Step 6: Clean up build artifacts
       - name: Clean up build artifacts
         run: |
           rm -rf server/node_modules
           rm -rf client/node_modules
           rm -f node_modules.tar.gz
 
-      # Step 8: Deploy to Azure
+      # Step 7: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
