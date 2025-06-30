@@ -1,10 +1,14 @@
 name: Fullstack Deploy to Azure
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+
 env:
   AZURE_WEBAPP_NAME: ubicom-chatbot-web-app
-  AZURE_WEBAPP_PACKAGE_PATH: 'client/build'
-  NODE_VERSION: '18.x'  # Use a more stable version of Node.js
+  AZURE_RESOURCE_GROUP: genai-research
+  NODE_VERSION: '18.x'
 
 jobs:
   build-and-deploy:
@@ -24,58 +28,35 @@ jobs:
 
       # Step 3: Install and build React app
       - name: Install and build React app
-        run: |
-          npm install
-          npm run build
         working-directory: ./client
-
-      # Step 4: Copy React build to backend (public folder)
-      - name: Copy React build to backend
         run: |
-          rm -rf server/public
-          mkdir -p server/public
-          cp -r client/build/* server/public/
+          npm ci
+          npm run build
+
+      # Step 4: Create wwwroot directory, copy React build to server, and verify contents
+      - name: Create wwwroot and copy React build to server
+        run: |
+          mkdir -p ./server/wwwroot    # Create the wwwroot directory if it doesn't exist
+          cp -r ./client/build/* ./server/wwwroot/
+          ls -al ./server/wwwroot      # List contents to verify the files have been copied
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
         run: |
-          npm install
+          npm ci --omit=dev
 
-      # Step 6: Debug server folder before deployment
-      - name: Debug server folder before deployment
-        run: ls -alR ./server
-
-      # Step 7: Create a deployment folder structure for Azure
-      - name: Prepare deployment package
+      # Step 6: Clean up build artifacts
+      - name: Clean up build artifacts
         run: |
-          mkdir -p deploy/wwwroot/client  # Create directory for React app
-          mkdir -p deploy/wwwroot/server  # Create directory for server app
+          rm -rf server/node_modules
+          rm -rf client/node_modules
+          rm -f node_modules.tar.gz
 
-          # Copy client build to wwwroot/client
-          cp -r client/build/* deploy/wwwroot/client/
-
-          # Copy server files (including server.js) to wwwroot/server
-          cp -r server/* deploy/wwwroot/server/
-
-          # Debug contents
-          ls -alR deploy/wwwroot/
-
-      # Step 8: Zip the deploy folder, ensuring correct structure
-      - name: Zip deploy package for Azure
-        run: |
-          cd deploy
-          zip -r ../deploy.zip ./wwwroot  # Ensure wwwroot is zipped correctly
-
-      # Step 9: Deploy to Azure
+      # Step 7: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: deploy.zip
-
-      # Step 10: Restart Azure App Service (optional, after deployment)
-      - name: Restart Azure App Service
-        run: |
-          az webapp restart --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group genai-research
+          package: ./server
