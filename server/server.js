@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from React build (already copied to server/public)
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'wwwroot')));
 
 // // Sample API route
 // app.get('/api/hello', (req, res) => {
