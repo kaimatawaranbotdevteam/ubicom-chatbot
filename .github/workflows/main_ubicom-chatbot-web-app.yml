@@ -38,7 +38,8 @@ jobs:
         run: |
           mkdir -p ./server/wwwroot    # Create the wwwroot directory if it doesn't exist
           cp -r ./client/build/* ./server/wwwroot/
-          ls -al ./server/wwwroot      # List contents to verify the files have been copied
+          cp -r ./client/build/. ./server/wwwroot/    # Ensure all subdirectories are copied
+          ls -alR ./server/wwwroot      # List contents of wwwroot recursively for verification
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
