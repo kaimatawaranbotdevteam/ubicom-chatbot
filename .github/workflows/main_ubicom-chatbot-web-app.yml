@@ -38,7 +38,7 @@ jobs:
 
       # Step 4: Copy React build to the server's root
       - name: Copy React build to server
-        working-directory: ./
+        working-directory: ./ 
         run: |
           # Create the wwwroot directory in the root of the deployment package
           mkdir -p ./server/wwwroot
@@ -67,4 +67,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server/wwwroot
+          package: ./server  # <-- This should be the entire ./server directory, not ./server/wwwroot
