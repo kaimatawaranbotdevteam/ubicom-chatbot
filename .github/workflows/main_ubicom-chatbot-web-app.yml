@@ -38,6 +38,7 @@ jobs:
 
       # Step 4: Copy React build to the server's root
       - name: Copy React build to server
+        working-directory: ./
         run: |
           # Create the wwwroot directory in the root of the deployment package
           mkdir -p ./server/wwwroot
