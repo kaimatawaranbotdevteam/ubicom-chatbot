@@ -44,6 +44,9 @@ jobs:
           mkdir -p ./server/wwwroot
           cp -r ./client/build/* ./server/wwwroot/
 
+      - name: List server folder before deploy
+        run: ls -la ./server/wwwroot
+
       # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
@@ -61,4 +64,4 @@ jobs:
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server
+          package: ./server/wwwroot
