@@ -50,7 +50,6 @@ jobs:
       # Step 6: Clean up build artifacts
       - name: Clean up build artifacts
         run: |
-          rm -rf server/node_modules
           rm -rf client/node_modules
           rm -f node_modules.tar.gz
 
