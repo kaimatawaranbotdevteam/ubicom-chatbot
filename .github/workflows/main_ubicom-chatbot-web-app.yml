@@ -33,19 +33,16 @@ jobs:
           npm ci
           npm run build
 
-      # Step 4: Create wwwroot directory, copy React build to server, and verify contents
+      # Step 4: Create wwwroot directory and copy React build to server
       - name: Create wwwroot and copy React build to server
         run: |
-          mkdir -p ./server/wwwroot    # Create the wwwroot directory if it doesn't exist
+          mkdir -p ./server/wwwroot
           cp -r ./client/build/* ./server/wwwroot/
-          cp -r ./client/build/. ./server/wwwroot/    # Ensure all subdirectories are copied
-          ls -alR ./server/wwwroot      # List contents of wwwroot recursively for verification
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
-        run: |
-          npm ci --omit=dev
+        run: npm ci --production
 
       # Step 6: Clean up build artifacts
       - name: Clean up build artifacts

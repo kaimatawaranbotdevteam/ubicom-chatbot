@@ -7,12 +7,14 @@ const xlsx = require('xlsx');
 require('dotenv').config();
 
 const express = require('express');
+const app = express();
+app.use(express.json());
+
 const cors = require('cors');
+app.use(cors());
+
 const path = require('path');
 
-const app = express();
-app.use(cors());
-app.use(express.json());
 
 // Serve static files from React build (already copied to server/public)
 app.use(express.static(path.join(__dirname, 'wwwroot')));
