@@ -36,34 +36,31 @@ jobs:
           echo "Listing contents of ./client/build (actually just ./build here):"
           ls -la build
 
-      # Step 4: Copy React build to the server folder
-      - name: Copy React build to server folder
-        working-directory: ./client
+      # Step 4: Copy the build folder to the server folder
+      - name: Copy build folder to server
         run: |
-          echo "Copying React build from ./client/build to ./server"
-          cp -r build/* ../server/
+          mkdir -p ./server  # Make sure the server folder exists
+          cp -r ./client/build/* ./server/  # Copy everything from client/build/ to server/
 
-      # Step 5: Verify React build files are copied to the server folder
-      - name: List server folder contents before deploy
-        run: |
-          echo "Listing contents of ./server (with React build copied):"
-          ls -la ./server
 
-      # Step 6: Install server dependencies
+      # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
         run: npm ci --omit=dev
 
-      # Step 7: Clean up build artifacts (optional)
+      - name: List ./server contents before deploy
+        run: ls -la ./server
+
+      # Step 6: Clean up build artifacts
       - name: Clean up build artifacts
         run: |
           rm -rf client/node_modules
           rm -f node_modules.tar.gz
 
-      # Step 8: Deploy to Azure
+      # Step 7: Deploy to Azure
       - name: Deploy to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: ./server
+          package: ./server  # <-- This should be the entire ./server directory, not ./server/wwwroot
