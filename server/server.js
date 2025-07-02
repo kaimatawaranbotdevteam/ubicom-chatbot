@@ -17,7 +17,7 @@ const path = require('path');
 
 
 // Serve static files from React build (already copied to server/public)
-app.use(express.static(path.join(__dirname, 'build')));
+app.use(express.static(path.join(__dirname, 'index.html')));
 
 // // Sample API route
 // app.get('/api/hello', (req, res) => {
