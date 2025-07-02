@@ -7,27 +7,21 @@ const xlsx = require('xlsx');
 require('dotenv').config();
 
 const express = require('express');
+const path = require('path');
+
 const app = express();
 app.use(express.json());
 
 const cors = require('cors');
 app.use(cors());
 
-const path = require('path');
+// Serve static files from the 'build' folder
+app.use(express.static(path.join(__dirname, 'build')));
 
-
-// Serve static files from React build (already copied to server/public)
-app.use(express.static(path.join(__dirname, 'index.html')));
-
-// // Sample API route
-// app.get('/api/hello', (req, res) => {
-//   res.json({ message: 'Hello from backend!' });
-// });
-
-// // Fallback route for React (SPA support)
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
+// Catch-all route to serve index.html for SPA
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 // Azure Blob Storage Setup
 const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_STORAGE_CONNECTION_STRING);

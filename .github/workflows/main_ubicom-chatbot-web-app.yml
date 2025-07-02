@@ -39,8 +39,8 @@ jobs:
       # Step 4: Copy the build folder to the server folder
       - name: Copy build folder to server
         run: |
-          mkdir -p ./server  # Make sure the server folder exists
-          cp -r ./client/build/* ./server/  # Copy everything from client/build/ to server/
+          mkdir -p ./server/build  # Make sure the server folder exists
+          cp -r ./client/build/* ./server/build/  # Copy everything from client/build/ to server/
 
 
       # Step 5: Install server dependencies
