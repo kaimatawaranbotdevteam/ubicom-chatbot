@@ -36,16 +36,14 @@ jobs:
           echo "Listing contents of ./client/build (actually just ./build here):"
           ls -la build
 
-      # Step 4: Copy React build to the server's root
       - name: Copy React build to server
-        working-directory: ./ 
+        working-directory: ./client
         run: |
-          # Create the wwwroot directory in the root of the deployment package
-          mkdir -p ./server/wwwroot
-          cp -r ./client/build/* ./server/wwwroot/
+          mkdir -p ../server
+          cp -r build/* ../server/
 
-      - name: List server folder before deploy
-        run: ls -la ./server/wwwroot
+          == ./server contents ==="
+          ls -R ./server
 
       # Step 5: Install server dependencies
       - name: Install server dependencies
