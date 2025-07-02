@@ -42,9 +42,6 @@ jobs:
           mkdir -p ../server
           cp -r build/* ../server/
 
-          == ./server contents ==="
-          ls -R ./server
-
       # Step 5: Install server dependencies
       - name: Install server dependencies
         working-directory: ./server
