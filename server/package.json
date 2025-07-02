@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "start": "pm2 start server.js --name server"
+    "start": "node server.js"
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
