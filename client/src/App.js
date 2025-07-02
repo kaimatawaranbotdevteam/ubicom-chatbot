@@ -1,5 +1,5 @@
-// App.jsx - React frontend (chat-like UI)
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import './index.css';
 import { LuSend } from "react-icons/lu";
 
@@ -28,33 +28,21 @@ export default function App() {
     setMessages(updatedMessages);
 
     try {
-      const res = await fetch("http://localhost:3001/api/query", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: updatedMessages}),
-      });
+      axios.post('https://ubicom-chatbot-web-app.azurewebsites.net/api/query', { messages: updatedMessages })
+        .then(res => {
 
-      const data = await res.json();
-
-      const responseMessages = {
+        const responseMessages = {
         role: "system",
-        content: data.reply
+        content: res.data.reply
       };
 
       setMessages((prev) => [
         ...prev, responseMessages]);
 
-      console.log('Azure Completion Response:', data.reply);
-
-      if (!res.ok) {
-        alert(data.error || "Something went wrong. Please try again.");
-        return;
-      }
-
-      if (!data.reply) {
-        alert("No answer received from the AI service.");
-        return;
-      }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
     } catch (error) {
       console.error("Fetch failed:", error);
       alert("Network error. Please check your server.");
